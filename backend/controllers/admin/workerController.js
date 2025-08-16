@@ -1,6 +1,6 @@
-const Worker = require('../../models/workerModel'); // Updated name
+const Worker = require('../../models/workerModel');
 const User = require('../../models/User');
-const Department = require('../../models/departmentModel'); // Updated name
+const Department = require('../../models/departmentModel');
 const bcrypt = require('bcrypt');
 const Role = require('../../models/Role');
 const mongoose = require('mongoose');
@@ -81,72 +81,6 @@ exports.getWorkers = async (req, res) => {
             .populate('user', 'email');
         res.status(200).json(workers);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server Error' });
-    }
-};
-
-exports.updateWorker = async (req, res) => {
-    const { id } = req.params;
-    const { name, username, email, department, salary, workingHours } = req.body;
-
-    try {
-        const worker = await Worker.findById(id);
-        if (!worker) {
-            return res.status(404).json({ message: 'Worker not found.' });
-        }
-
-        // Update associated User document
-        await User.findByIdAndUpdate(worker.user, { name, username, email });
-
-        // Update Worker document
-        worker.name = name;
-        worker.username = username;
-        worker.department = department;
-        worker.salary = salary;
-        worker.workingHours = workingHours;
-        await worker.save();
-
-        res.status(200).json({ message: 'Worker updated successfully!', worker });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server Error' });
-    }
-};
-
-exports.deleteWorker = async (req, res) => {
-    const { id } = req.params;
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
-    try {
-        const worker = await Worker.findById(id).session(session);
-        if (!worker) {
-            await session.abortTransaction();
-            session.endSession();
-            return res.status(404).json({ message: 'Worker not found.' });
-        }
-
-        // Remove worker from their department
-        await Department.findByIdAndUpdate(
-            worker.department,
-            { $pull: { workers: worker._id } },
-            { session }
-        );
-
-        // Delete the associated user
-        await User.findByIdAndDelete(worker.user).session(session);
-
-        // Delete the worker
-        await Worker.findByIdAndDelete(id).session(session);
-
-        await session.commitTransaction();
-        session.endSession();
-
-        res.status(200).json({ message: 'Worker deleted successfully!' });
-    } catch (error) {
-        await session.abortTransaction();
-        session.endSession();
         console.error(error);
         res.status(500).json({ message: 'Server Error' });
     }

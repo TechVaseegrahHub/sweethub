@@ -8,7 +8,6 @@ function AddWorker() {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [department, setDepartment] = useState('');
   const [salary, setSalary] = useState('');
   const [workingHoursFrom, setWorkingHoursFrom] = useState('09:00');
@@ -17,8 +16,9 @@ function AddWorker() {
   const [lunchBreakTo, setLunchBreakTo] = useState('13:00');
   const [departments, setDepartments] = useState([]);
   const [message, setMessage] = useState('');
+  const [tempPassword, setTempPassword] = useState('');
   const [error, setError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -31,6 +31,8 @@ function AddWorker() {
       } catch (err) {
         setError('Failed to load departments.');
         console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchDepartments();
@@ -40,31 +42,36 @@ function AddWorker() {
     e.preventDefault();
     setMessage('');
     setError('');
+    setTempPassword('');
 
     const workingHours = { from: workingHoursFrom, to: workingHoursTo };
     const lunchBreak = { from: lunchBreakFrom, to: lunchBreakTo };
 
     try {
-      await axios.post(
+      const response = await axios.post(
         WORKER_URL,
-        JSON.stringify({ name, username, email, password, department, salary, workingHours, lunchBreak }),
+        JSON.stringify({ name, username, email, department, salary, workingHours, lunchBreak }),
         {
           headers: { 'Content-Type': 'application/json' },
           withCredentials: true,
         }
       );
-      setMessage(`Worker "${name}" added successfully!`);
+      setMessage(response.data.message);
+      setTempPassword(response.data.tempPassword);
       // Reset form
       setName('');
       setUsername('');
       setEmail('');
-      setPassword('');
       setSalary('');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to add worker. Please check the form data.');
       console.error(err);
     }
   };
+
+  if (loading) {
+    return <div className="p-6 text-center">Loading departments...</div>;
+  }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -99,22 +106,6 @@ function AddWorker() {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-        </div>
-        <div className="relative">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Password</label>
-          <input
-            type={showPassword ? 'text' : 'password'}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <span
-            className="absolute right-3 top-10 cursor-pointer"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {/* You'll need to add icon images for show/hide */}
-          </span>
         </div>
         <div>
           <label className="block text-gray-700 text-sm font-bold mb-2">Department</label>
@@ -193,7 +184,11 @@ function AddWorker() {
           Add Worker
         </button>
       </form>
-      {message && <p className="mt-4 text-green-500">{message}</p>}
+      {message && (
+        <p className="mt-4 text-green-500">
+          {message} The temporary password is: <span className="font-bold">{tempPassword}</span>
+        </p>
+      )}
     </div>
   );
 }

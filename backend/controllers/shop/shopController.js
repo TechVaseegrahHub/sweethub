@@ -1,9 +1,11 @@
-const Product = require('../../models/productModel'); // Updated name
-const Bill = require('../../models/billModel'); // Updated name
-const Worker = require('../../models/workerModel'); // Updated name
+const Product = require('../../models/productModel'); // Updated import
+const Bill = require('../../models/billModel'); // Updated import
+const Worker = require('../../models/workerModel'); // Updated import
 
 exports.getShopDashboard = async (req, res) => {
   try {
+    // Fetch total sales for the shop (assuming shop ID is available from auth or query)
+    // For now, let's just get overall sales for simplicity, you'd filter by shop in a real app
     const sales = await Bill.aggregate([
       { $group: { _id: null, totalSales: { $sum: '$totalAmount' } } },
     ]);
@@ -11,7 +13,8 @@ exports.getShopDashboard = async (req, res) => {
 
     const workers = await Worker.find().populate('user', 'name').select('name workingHours');
     
-    const products = await Product.find().select('name stockLevel');
+    // Fetch products with their current stock levels
+    const products = await Product.find().select('name stockLevel unit');
 
     res.status(200).json({
       message: 'Shop dashboard data retrieved successfully.',

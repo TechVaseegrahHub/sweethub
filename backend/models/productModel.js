@@ -6,13 +6,38 @@ const productSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  price: {
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+    required: true,
+  },
+  sku: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  netPrice: {
     type: Number,
     required: true,
+  },
+  sellingPrice: {
+    type: Number,
+    required: true,
+    validate: {
+      validator: function(v) {
+        return v >= this.netPrice;
+      },
+      message: props => `Selling price (${props.value}) must be greater than or equal to the net price (${props.path}).`
+    }
   },
   stockLevel: {
     type: Number,
     default: 0,
+  },
+  unit: {
+    type: String,
+    required: true,
+    default: 'piece',
   },
   productType: {
     type: String,

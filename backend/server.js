@@ -12,6 +12,7 @@ const Product = require('./models/productModel');
 const Bill = require('./models/billModel');
 const Attendance = require('./models/attendanceModel');
 const Task = require('./models/task');
+const Category = require('./models/Category');
 
 dotenv.config();
 
@@ -91,8 +92,7 @@ const billingRoutes = require('./routes/admin/adminBillRoutes');
 const salaryRoutes = require('./routes/admin/salaryRoutes');
 const shopAdminRoutes = require('./routes/admin/adminShopRoutes');
 const shopRoutes = require('./routes/shop/shopRoutes');
-const attendanceRoutes = require('./routes/admin/adminAttendanceRoutes');
-
+const categoryRoutes = require('./routes/admin/categoryRoutes');
 
 // Use Routes
 app.use('/api/admin/departments', departmentRoutes);
@@ -103,7 +103,7 @@ app.use('/api/admin/billing', billingRoutes);
 app.use('/api/admin/salary', salaryRoutes);
 app.use('/api/admin/shops', shopAdminRoutes);
 app.use('/api/shop', shopRoutes);
-app.use('/api/admin/attendance', attendanceRoutes);
+app.use('/api/admin/categories', categoryRoutes);
 
 app.get('/', (req, res) => res.send('API is running...'));
 

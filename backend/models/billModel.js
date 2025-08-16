@@ -6,6 +6,14 @@ const billSchema = new mongoose.Schema({
     ref: 'Shop',
     required: true,
   },
+  customerMobileNumber: {
+    type: String,
+    required: true,
+  },
+  customerName: {
+    type: String,
+    required: true,
+  },
   items: [{
     product: {
       type: mongoose.Schema.Types.ObjectId,
@@ -16,12 +24,21 @@ const billSchema = new mongoose.Schema({
       type: Number,
       required: true,
     },
-    price: {
+    price: { // Price at the time of billing
       type: Number,
       required: true,
     },
   }],
   totalAmount: {
+    type: Number,
+    required: true,
+  },
+  paymentMethod: {
+    type: String,
+    enum: ['Cash', 'UPI', 'Card'],
+    required: true,
+  },
+  amountPaid: {
     type: Number,
     required: true,
   },
