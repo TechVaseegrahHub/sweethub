@@ -7,7 +7,7 @@ import NotFound from './pages/NotFound';
 
 function App() {
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-gray-50 text-gray-800 min-h-screen">
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/admin/*" element={<AdminPage />} />

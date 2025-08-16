@@ -1,12 +1,16 @@
 const jwt = require('jsonwebtoken');
 
 exports.adminAuth = (req, res, next) => {
-    const token = req.header('Authorization');
+    let token = req.header('Authorization');
 
     if (!token) {
         return res.status(401).json({ message: 'No token, authorization denied' });
     }
 
+    if (token.startsWith('Bearer ')) {
+        // Remove Bearer from string
+        token = token.slice(7, token.length).trimStart();
+    }
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         // Assuming your JWT payload includes a role
@@ -21,12 +25,16 @@ exports.adminAuth = (req, res, next) => {
 };
 
 exports.shopAuth = (req, res, next) => {
-    const token = req.header('Authorization');
+    let token = req.header('Authorization');
 
     if (!token) {
         return res.status(401).json({ message: 'No token, authorization denied' });
     }
 
+    if (token.startsWith('Bearer ')) {
+        // Remove Bearer from string
+        token = token.slice(7, token.length).trimStart();
+    }
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         // Assuming your JWT payload includes a role

@@ -25,7 +25,11 @@ function CreateDepartment() {
       setMessage(`Department "${departmentName}" created successfully!`);
       setDepartmentName('');
     } catch (err) {
-      setError('Failed to create department. Please check the form data.');
+      if (!err?.response) {
+        setError('No Server Response');
+      } else {
+        setError('Failed to create department. Please check the form data.');
+      }
       console.error(err);
     }
   };

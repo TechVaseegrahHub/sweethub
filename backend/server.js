@@ -91,6 +91,8 @@ const billingRoutes = require('./routes/admin/adminBillRoutes');
 const salaryRoutes = require('./routes/admin/salaryRoutes');
 const shopAdminRoutes = require('./routes/admin/adminShopRoutes');
 const shopRoutes = require('./routes/shop/shopRoutes');
+const attendanceRoutes = require('./routes/admin/adminAttendanceRoutes');
+
 
 // Use Routes
 app.use('/api/admin/departments', departmentRoutes);
@@ -101,6 +103,7 @@ app.use('/api/admin/billing', billingRoutes);
 app.use('/api/admin/salary', salaryRoutes);
 app.use('/api/admin/shops', shopAdminRoutes);
 app.use('/api/shop', shopRoutes);
+app.use('/api/admin/attendance', attendanceRoutes);
 
 app.get('/', (req, res) => res.send('API is running...'));
 

@@ -20,7 +20,7 @@ function AdminPage() {
   return (
     <div className="flex bg-gray-100 min-h-screen">
       <Sidebar />
-      <div className="flex-1 p-8">
+      <div className="flex-1 p-4 sm:p-6 md:p-8 bg-light-gray">
         <Routes>
           <Route path="departments/create" element={<CreateDepartment />} />
           <Route path="departments/view" element={<ViewDepartments />} />
