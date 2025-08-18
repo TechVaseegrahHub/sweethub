@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from '../../../api/axios';
 
 const PRODUCTS_URL = '/admin/products';
-const STOCK_ALERT_THRESHOLD = 10;
 
 function StockAlerts() {
   const [lowStockProducts, setLowStockProducts] = useState([]);
@@ -17,7 +16,7 @@ function StockAlerts() {
           withCredentials: true,
         });
         const lowStock = response.data.filter(
-          (product) => product.stockLevel <= STOCK_ALERT_THRESHOLD
+          (product) => product.stockLevel <= (product.stockAlertThreshold || 0)
         );
         setLowStockProducts(lowStock);
       } catch (err) {
@@ -51,7 +50,7 @@ function StockAlerts() {
               <li key={product._id} className="py-4">
                 <p className="font-medium text-gray-900">{product.name}</p>
                 <p className="text-sm text-gray-500">
-                  Current Stock: <span className="font-bold text-red-500">{product.stockLevel}</span>
+                  Current Stock: <span className="font-bold text-red-500">{product.stockLevel}</span> (Threshold: {product.stockAlertThreshold})
                 </p>
               </li>
             ))}

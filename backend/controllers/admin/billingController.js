@@ -59,7 +59,12 @@ exports.createBill = async (req, res) => {
     await session.commitTransaction();
     session.endSession();
 
-    res.status(201).json(newBill);
+    const populatedBill = await Bill.findById(newBill._id)
+      .populate('shop', 'name location')
+      .populate('items.product', 'name sku unit');
+
+    res.status(201).json(populatedBill);
+    
   } catch (error) {
     await session.abortTransaction();
     session.endSession();

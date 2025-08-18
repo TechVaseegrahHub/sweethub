@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../../api/axios';
+import { generateInvoicePdf } from '../../../utils/generateInvoicePdf';
 
 const BILLS_URL = '/admin/billing';
 
@@ -26,9 +27,10 @@ function AdminViewBills() {
     fetchBills();
   }, []);
 
+
   const generateInvoice = (bill) => {
-    alert(`Generating invoice for Bill #${bill._id}`);
-    // A more complete implementation would generate a PDF or a printable view.
+    // The shop info is already populated in the bill object from the backend
+    generateInvoicePdf(bill, bill.shop);
   };
 
   if (loading) {
@@ -46,11 +48,12 @@ function AdminViewBills() {
         <p>No bills found.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+        <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill ID</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shop</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Items Purchased</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Amount</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill Date</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -59,9 +62,17 @@ function AdminViewBills() {
             <tbody className="bg-white divide-y divide-gray-200">
               {bills.map((bill) => (
                 <tr key={bill._id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{bill._id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{bill.shop.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{bill.totalAmount}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{bill._id.slice(-8)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <div>{bill.customerName}</div>
+                    <div>{bill.customerMobileNumber}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {bill.items.map(item => (
+                    <div key={item._id}>{item.product ? item.product.name : '[Deleted Product]'} (x{item.quantity})</div>
+                    ))}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹{bill.totalAmount.toFixed(2)}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(bill.billDate).toLocaleDateString()}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button

@@ -12,7 +12,7 @@ import AddCategory from '../components/admin/product/AddCategory';
 import TrackStock from '../components/admin/warehouse/TrackStock';
 import StockAlerts from '../components/admin/warehouse/StockAlerts';
 import CreateBill from '../components/admin/billing/AdminCreateBill';
-import ViewBills from '../components/admin/billing/AdminCreateBill';
+import ViewBills from '../components/admin/billing/AdminViewBills';
 import AddShop from '../components/admin/shop/AddShop';
 import ViewShops from '../components/admin/shop/ViewShops';
 
