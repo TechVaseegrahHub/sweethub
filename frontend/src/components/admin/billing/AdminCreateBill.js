@@ -56,8 +56,8 @@ function CreateBill() {
     if (searchTerm) {
       const filtered = products.filter(
         (product) =>
-          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.sku.toLowerCase().includes(searchTerm.toLowerCase())
+          (product.name && product.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (product.sku && product.sku.toLowerCase().includes(searchTerm.toLowerCase()))
       );
       setSearchResults(filtered);
     } else {
@@ -73,7 +73,7 @@ function CreateBill() {
 
   const handleProductSelect = (product) => {
     setSelectedProduct(product);
-    setSearchTerm(product.name); // Set search term to product name
+    setSearchTerm(''); // Clear the search term to hide suggestions.
     setSearchResults([]); // Hide search results dropdown
     setQuantity(1); // Set a default quantity
     setError('');
@@ -85,6 +85,8 @@ function CreateBill() {
         setError(`Insufficient stock for ${selectedProduct.name}. Available: ${selectedProduct.stockLevel}`);
         return;
       }
+
+      const price = selectedProduct.sellingPrice ?? 0;
 
       const existingItemIndex = billItems.findIndex(item => item.product === selectedProduct._id);
       let newTotalAmount = totalAmount;
@@ -104,18 +106,18 @@ function CreateBill() {
           quantity: newQuantity,
         };
         setBillItems(updatedItems);
-        newTotalAmount += selectedProduct.sellingPrice * quantity;
+        newTotalAmount += price * quantity;
       } else {
         const newItem = {
           product: selectedProduct._id,
           name: selectedProduct.name,
           sku: selectedProduct.sku,
           quantity: quantity,
-          price: selectedProduct.sellingPrice,
+          price: price,
           unit: selectedProduct.unit,
         };
         setBillItems([...billItems, newItem]);
-        newTotalAmount += selectedProduct.sellingPrice * quantity;
+        newTotalAmount += price * quantity;
       }
 
       setTotalAmount(newTotalAmount);
@@ -365,7 +367,7 @@ function CreateBill() {
               Amount Paid
             </label>
             <input
-              type="number"
+              type="text"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="amountPaid"
               value={amountPaid}
